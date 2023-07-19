@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ApiControllerTest {
-    @Value(value="${local.server.port}")
+    @Value(value = "${local.server.port}")
     private int port;
 
     @Autowired
@@ -22,14 +22,15 @@ class ApiControllerTest {
     @Test
     public void apiShouldBeExposed() throws Exception {
         assertThat(this.restTemplate.getForObject("http://localhost:" + port + API_PATH + "/octo",
-                String.class)).contains("login: octo");
+                Map.class))
+                .containsEntry("id", "583231")
+                .containsEntry("login", "octocat");
     }
 
     @Test
     public void fetchingRealOcto() throws Exception {
         assertThat(this.restTemplate.getForObject("https://api.github.com/users/octocat",
                 Map.class))
-                .containsKey("id")
-                .containsEntry("id", 58323111);
+                .containsKey("id");
     }
 }
