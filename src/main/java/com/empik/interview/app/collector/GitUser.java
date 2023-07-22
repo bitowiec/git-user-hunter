@@ -1,11 +1,15 @@
 package com.empik.interview.app.collector;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
-@Value
+@NoArgsConstructor
+@Data
+@AllArgsConstructor
 @Builder
 public class GitUser {
     String login;

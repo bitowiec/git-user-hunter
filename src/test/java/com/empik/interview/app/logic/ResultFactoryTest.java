@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ResultFactoryTest {
 
-    private static Stream<Arguments> provideStringsForIsBlank() {
+    private static Stream<Arguments> testCases() {
         return Stream.of(
                 Arguments.of("Starting point", GitUser.builder().public_repos(0).followers(0).build(),
                         (Consumer<AbstractDoubleAssert<?>>) AbstractDoubleAssert::isInfinite),
@@ -26,7 +26,7 @@ class ResultFactoryTest {
     }
 
     @ParameterizedTest(name = "[{index}]: {0}")
-    @MethodSource("provideStringsForIsBlank")
+    @MethodSource("testCases")
     void shouldDoTheMath(String testCase, GitUser u, Consumer<AbstractDoubleAssert<?>> assertion) {
         assertion.accept(assertThat(ResultFactory.calculationLogic(u)));
     }

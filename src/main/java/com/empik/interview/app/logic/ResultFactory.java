@@ -18,9 +18,6 @@ public class ResultFactory {
     }
 
     static Double calculationLogic(GitUser u) {
-//        if(Integer.valueOf(0).equals(u.getFollowers()){
-//            return Double.POSITIVE_INFINITY
-//        }
         return 6d * (2 + u.getPublic_repos()) / u.getFollowers();
     }
 }

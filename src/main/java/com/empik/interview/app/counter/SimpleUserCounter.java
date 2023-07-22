@@ -10,18 +10,16 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @ConditionalOnMissingBean(DataSource.class)
 public class SimpleUserCounter implements UserCounter<Audit> {
-private final Map<String, Long> cache = new ConcurrentHashMap<>();
+    private final Map<String, Integer> cache = new ConcurrentHashMap<>();
 
-    public Audit save(Audit a) {
-        String login = a.getLogin();
-        Long result = cache.merge(login, 1L, Long::sum);
-        return new Audit(login, result);
+    @Override
+    public Audit findByLogin(String login) {
+        Integer count = cache.getOrDefault(login, 0);
+        return new Audit(login, count.longValue());
     }
 
     @Override
     public Integer makeItCount(String login) {
-        //here value of counter doesn't matter cause value is kept in cache field
-        save(new Audit(login, 0L));
-        return 1;
+        return cache.merge(login, 1, Integer::sum);
     }
 }
