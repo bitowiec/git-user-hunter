@@ -1,7 +1,8 @@
 plugins {
-	java
-	id("org.springframework.boot") version "2.7.13"
-	id("io.spring.dependency-management") version "1.0.15.RELEASE"
+    java
+    id("org.springframework.boot") version "3.1.2"
+//    id("org.springframework.boot") version "2.7.13"
+    id("io.spring.dependency-management") version "1.0.15.RELEASE"
 }
 
 group = "com.company"
@@ -12,24 +13,31 @@ java {
 }
 
 configurations {
-	compileOnly {
-		extendsFrom(configurations.annotationProcessor.get())
-	}
+    compileOnly {
+        extendsFrom(configurations.annotationProcessor.get())
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-web")
-	compileOnly("org.projectlombok:lombok")
-	runtimeOnly("com.h2database:h2")
-	annotationProcessor("org.projectlombok:lombok")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
+//    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+// or
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+//    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+//    implementation("org.springframework.boot:spring-boot-starter-web")
+//    if (project.hasProperty("reactive") {
+//    runtimeOnly("io.r2dbc:r2dbc-h2")
+//    }
+//    runtimeOnly("com.h2database:h2")
+    compileOnly("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.projectreactor:reactor-test")
 }
 
 tasks.withType<Test> {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }

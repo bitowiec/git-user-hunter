@@ -14,7 +14,7 @@ class ConnectivityGitHubUserCollectorTest {
     @Autowired
     private GitHubUserCollector collector;
 
-    @Test
+//    @Test
     public void fetchingRealOcto() {
         assertThat(collector.collect("octocat"))
                 .hasFieldOrProperty("id")

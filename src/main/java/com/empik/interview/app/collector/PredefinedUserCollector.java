@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collections;
@@ -17,7 +16,9 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
+import java.util.stream.Stream;
 
+import static java.nio.file.Files.find;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toMap;
 
@@ -30,19 +31,20 @@ public class PredefinedUserCollector implements UserCollector {
                     Function.identity(),
                     BinaryOperator.maxBy(Comparator.comparingInt(GitUser::getFollowers))),
             Collections::unmodifiableMap);
-    private Map<String, GitUser> cache = Collections.EMPTY_MAP;
+    private final Map<String, GitUser> cache;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private final String searchPath;
 
     public PredefinedUserCollector(@Value(value = "${github-user-hunter.collector.search-path:src/main/resources/static/}") String searchPath) {
         this.searchPath = searchPath;
+        this.cache = collect();
     }
 
     private Map<String, GitUser> collect() {
-        try {
-            Path path = Path.of(searchPath);
-            return Files.find(path, 1, ONLY_FILES_PREDICATE)
+        Path path = Path.of(searchPath);
+        try (Stream<Path> pathStream = find(path, 1, ONLY_FILES_PREDICATE)) {
+            return pathStream
                     .map(Path::toFile)
                     .filter(JSON_PREDICATE)
                     .map(this::getReadValue)
@@ -62,13 +64,6 @@ public class PredefinedUserCollector implements UserCollector {
 
     @Override
     public GitUser collect(String login) {
-        if (cache.isEmpty()) {
-            synchronized (cache) {
-                if (cache.isEmpty()) {
-                    cache = collect();
-                }
-            }
-        }
         return cache.getOrDefault(login, cache.values().stream().findFirst().get());
     }
 }
